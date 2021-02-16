@@ -9,11 +9,16 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
+def mock(*args, **kwargs):
+    return {'success': True}
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    #CORS(app, resources='*')
+    CORS(app, resources='*')
 
     @app.after_request
     def after_request(response: flask.Response):
@@ -21,15 +26,13 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
         return response
 
-    @app.route('/')
-    def index():
-        return {'message': 'Hello world'}
-
     '''
     @TODO: 
     Create an endpoint to handle GET requests 
     for all available categories.
     '''
+
+    app.route('/categories')(mock)
 
     '''
     @TODO: 
@@ -44,6 +47,8 @@ def create_app(test_config=None):
     Clicking on the page numbers should update the questions. 
     '''
 
+    app.route('/questions')(mock)
+
     '''
     @TODO: 
     Create an endpoint to DELETE question using a question ID. 
@@ -51,6 +56,8 @@ def create_app(test_config=None):
     TEST: When you click the trash icon next to a question, the question will be removed.
     This removal will persist in the database and when you refresh the page. 
     '''
+
+    app.route('/questions/<int:id>', methods=['DELETE'])(mock)
 
     '''
     @TODO: 
@@ -62,6 +69,8 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.  
     '''
+
+    app.route('/questions', methods=['POST'])(mock)
 
     '''
     @TODO: 
@@ -83,6 +92,7 @@ def create_app(test_config=None):
     category to be shown. 
     '''
 
+    app.route('/categories/<int:id>/questions')(mock)
 
     '''
     @TODO: 
@@ -94,12 +104,6 @@ def create_app(test_config=None):
     TEST: In the "Play" tab, after a user selects "All" or a category,
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not. 
-    '''
-
-    '''
-    @TODO: 
-    Create error handlers for all expected errors 
-    including 404 and 422. 
     '''
 
     @app.errorhandler(400)
