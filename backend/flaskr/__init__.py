@@ -32,7 +32,12 @@ def create_app(test_config=None):
     for all available categories.
     '''
 
-    app.route('/categories')(mock)
+    @app.route('/categories')
+    def all_categories():
+        return {
+            'success': True,
+            'categories': {str(c.id): c.type for c in Category.query.all()},
+        }
 
     '''
     @TODO: 
