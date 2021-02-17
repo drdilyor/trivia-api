@@ -1,11 +1,12 @@
 import os
 import random
+from sys import exc_info
 
 import flask
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 
-from models import setup_db, Question, Category
+from models import setup_db, Question, Category, db
 
 QUESTIONS_PER_PAGE = 10
 
@@ -71,14 +72,28 @@ def create_app(test_config=None):
         }
 
     '''
-    @TODO: 
+    DONE:
     Create an endpoint to DELETE question using a question ID. 
   
     TEST: When you click the trash icon next to a question, the question will be removed.
     This removal will persist in the database and when you refresh the page. 
     '''
 
-    app.route('/questions/<int:id>', methods=['DELETE'])(mock)
+    @app.route('/questions/<int:id>', methods=['DELETE'])
+    def delete_question(id: int):
+        question = Question.query.get(id)
+        if not question:
+            abort(404)
+
+        try:
+            # we cannot use abort here because try block will catch it
+            db.session.delete(question)
+            db.session.commit()
+            return {'success': True}
+
+        except Exception:
+            print(exc_info())
+            abort(422)
 
     '''
     @TODO: 
