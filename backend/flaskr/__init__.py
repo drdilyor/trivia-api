@@ -5,6 +5,7 @@ from sys import exc_info
 import flask
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
+from sqlalchemy import not_
 
 from models import setup_db, Question, Category, db
 
@@ -174,7 +175,7 @@ def create_app(test_config=None):
         }
 
     '''
-    @TODO: 
+    DONE: 
     Create a POST endpoint to get questions to play the quiz. 
     This endpoint should take category and previous question parameters 
     and return a random questions within the given category, 
@@ -184,6 +185,36 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not. 
     '''
+    @app.route('/quizzes', methods=['POST'])
+    def play_quiz():
+        data = request.get_json()
+
+        prev_questions = data.get('previous_questions', [])
+        # Select all questions not in a list
+        # https://stackoverflow.com/a/20060684/13449712
+        questions = Question.query.filter(not_(Question.id.in_(prev_questions)))
+
+        # filter by category
+        category_obj = data.get('quiz_category')
+        if category_obj is not None:
+            category_id = category_obj.get('id')
+
+            if category_id is None:
+                abort(400)
+
+            category = Category.query.get(category_id) or abort(400)
+
+            questions = questions.filter_by(category=category)
+
+        questions = questions.all()
+        if questions:
+            return {
+                'success': True,
+                'question': random.choice(questions).format()
+            }
+        else:
+            return {'success': True, 'question': None}
+
 
     @app.errorhandler(400)
     def bad_request(_error):

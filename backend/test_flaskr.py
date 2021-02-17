@@ -51,6 +51,9 @@ class TriviaTestCase(unittest.TestCase):
             'difficulty': 1,
         }
 
+        # how much a quiz randomness test should repeat
+        self.quiz_tries = 1
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -170,6 +173,63 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
+
+    def test_quiz_no_previous_questions(self):
+        """POST /quizzes returns a question"""
+        res = self.client().post('/quizzes', json={})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertIsNotNone(data['question'])
+
+    def test_quiz_does_not_return_question_twice(self):
+        """Returns random quiz every time"""
+        cl = self.client()
+
+        for _ in range(self.quiz_tries):
+            res1 = cl.post('/quizzes', json={})
+            data1 = json.loads(res1.data)
+            q1 = data1['question']['id']
+            res2 = cl.post('/quizzes', json={'previous_questions': [q1]})
+            data2 = json.loads(res2.data)
+            q2 = data2['question']['id']
+            self.assertNotEqual(q1, q2)
+
+    def test_quiz_with_category(self):
+        """Returned quiz category matches requested category"""
+        cid = 1
+        res = self.client().post('/quizzes', json={'quiz_category': {'id': cid}})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['question']['category_id'], cid)
+
+    def test_quiz_invalid_category_id_400(self):
+        """If category doesn't exist, raises 404"""
+        res = self.client().post('/quizzes', json={'quiz_category': {'id': 999}})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    def test_quiz_null_category_id_400(self):
+        """If category is malformed, raises 400"""
+        res = self.client().post('/quizzes', json={'quiz_category': {}})
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    def test_quiz_no_quiz_left(self):
+        """If no quiz left, returns None"""
+        res = self.client().post('/quizzes', json={
+            'previous_questions': list(range(
+                Question.query.order_by(Question.id).first().id,
+                Question.query.order_by(Question.id.desc()).first().id + 1,
+            ))
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertIsNone(data.get('question'))
 
 
 # Make the tests conveniently executable
