@@ -152,7 +152,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(len(data['questions']), 3)
+        self.assertTrue(data['questions'])
 
     def test_get_category_questions_404(self):
         """

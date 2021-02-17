@@ -156,7 +156,7 @@ def create_app(test_config=None):
     '''
 
     '''
-    @TODO: 
+    DONE:
     Create a GET endpoint to get questions based on category. 
   
     TEST: In the "List" tab / main screen, clicking on one of the 
@@ -164,7 +164,14 @@ def create_app(test_config=None):
     category to be shown. 
     '''
 
-    app.route('/categories/<int:id>/questions')(mock)
+    @app.route('/categories/<int:id>/questions')
+    def category_questions(id: int):
+        category = Category.query.get(id) or abort(404)
+        questions = Question.query.filter_by(category=category).all()
+        return {
+            'success': True,
+            'questions': [q.format() for q in questions],
+        }
 
     '''
     @TODO: 
