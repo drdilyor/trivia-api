@@ -41,13 +41,13 @@ class TriviaTestCase(unittest.TestCase):
         self.new_question = {
             'question': 'Answer to the ultimate question',
             'answer': '42',
-            'category_id': 1,
+            'category': 1,
             'difficulty': 1,
         }
         self.bad_question = {
             'question': '',
             'answer': '',
-            'category_id': 999,
+            'category': 999,
             'difficulty': 1,
         }
 

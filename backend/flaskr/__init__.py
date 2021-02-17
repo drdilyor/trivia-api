@@ -102,7 +102,7 @@ def create_app(test_config=None):
             abort(422)
 
     '''
-    @TODO: 
+    DONE:
     Create an endpoint to POST a new question, 
     which will require the question and answer text, 
     category, and difficulty score.
@@ -112,7 +112,25 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.  
     '''
 
-    app.route('/questions', methods=['POST'])(mock)
+    @app.route('/questions', methods=['POST'])
+    def post_question():
+
+        data = request.get_json()
+        try:
+            category_id = int(data['category'])
+            category = Category.query.get(category_id) or abort(400)  # 400 or 404?
+            question = Question(
+                question=data['question'],
+                answer=data['answer'],
+                category=category,
+                difficulty=int(data['difficulty'])
+            )
+            db.session.add(question)
+            db.session.commit()
+            return {'success': True, 'question_id': question.id}
+        except (TypeError, KeyError):
+            print(exc_info())
+            abort(400)
 
     '''
     @TODO: 
