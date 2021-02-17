@@ -114,26 +114,38 @@ def create_app(test_config=None):
 
     @app.route('/questions', methods=['POST'])
     def post_question():
-
         data = request.get_json()
-        try:
-            category_id = int(data['category'])
-            category = Category.query.get(category_id) or abort(400)  # 400 or 404?
-            question = Question(
-                question=data['question'],
-                answer=data['answer'],
-                category=category,
-                difficulty=int(data['difficulty'])
-            )
-            db.session.add(question)
-            db.session.commit()
-            return {'success': True, 'question_id': question.id}
-        except (TypeError, KeyError):
-            print(exc_info())
-            abort(400)
+        search = data.get('searchTerm')
+
+        if search is not None:
+            questions = Question.query.filter(
+                Question.question.ilike(f'%{search}%')
+            ).all()
+            formatted_questions = [q.format() for q in questions]
+
+            return {
+                'success': True,
+                'questions': formatted_questions,
+            }
+        else:
+            try:
+                category_id = int(data['category'])
+                category = Category.query.get(category_id) or abort(400)  # 400 or 404?
+                question = Question(
+                    question=data['question'],
+                    answer=data['answer'],
+                    category=category,
+                    difficulty=int(data['difficulty'])
+                )
+                db.session.add(question)
+                db.session.commit()
+                return {'success': True, 'question_id': question.id}
+            except (TypeError, KeyError):
+                print(exc_info())
+                abort(400)
 
     '''
-    @TODO: 
+    DONE:
     Create a POST endpoint to get questions based on a search term. 
     It should return any questions for whom the search term 
     is a substring of the question. 

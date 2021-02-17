@@ -124,7 +124,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_search_questions(self):
         """POST /questions for searching questions works"""
         # note the case-insensitivity
-        res = self.client().post('/questions', json={'search': 'peanut'})
+        res = self.client().post('/questions', json={'searchTerm': 'ever'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -136,7 +136,7 @@ class TriviaTestCase(unittest.TestCase):
         POST /questions for searching non existing
         question returns empty list
         """
-        res = self.client().post('/questions', json={'search': 'applejacks'})
+        res = self.client().post('/questions', json={'searchTerm': 'applejacks'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
