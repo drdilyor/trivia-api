@@ -29,6 +29,15 @@ class TriviaTestCase(unittest.TestCase):
             # create all tables
             self.db.create_all()
 
+        self.categories_dict = {
+            '1': 'Science',
+            '2': 'Art',
+            '3': 'Geography',
+            '4': 'History',
+            '5': 'Entertainment',
+            '6': 'Sports',
+        }
+
         self.new_question = {
             'question': 'Answer to the ultimate question',
             'answer': '42',
@@ -56,14 +65,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['categories'], {
-            '1': 'Science',
-            '2': 'Art',
-            '3': 'Geography',
-            '4': 'History',
-            '5': 'Entertainment',
-            '6': 'Sports',
-        })
+        self.assertEqual(data['categories'], self.categories_dict)
 
     def test_get_paginated_questions(self):
         """GET /questions returns first 10 questions"""
@@ -72,6 +74,8 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(len(data['questions']), 10)
+        self.assertIsNotNone(data.get('total_questions'))
+        self.assertEqual(data.get('categories'), self.categories_dict)
 
     def test_get_questions_beyond_valid_page_404(self):
         """GET /questions with invalid page raises 404"""

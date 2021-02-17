@@ -18,7 +18,8 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app, resources='*')
+    # Enables CORS for all endpoints
+    CORS(app)
 
     @app.after_request
     def after_request(response: flask.Response):
@@ -27,7 +28,7 @@ def create_app(test_config=None):
         return response
 
     '''
-    @TODO: 
+    DONE:
     Create an endpoint to handle GET requests 
     for all available categories.
     '''
@@ -40,7 +41,7 @@ def create_app(test_config=None):
         }
 
     '''
-    @TODO: 
+    DONE:
     Create an endpoint to handle GET requests for questions, 
     including pagination (every 10 questions). 
     This endpoint should return a list of questions, 
@@ -52,7 +53,22 @@ def create_app(test_config=None):
     Clicking on the page numbers should update the questions. 
     '''
 
-    app.route('/questions')(mock)
+    @app.route('/questions')
+    def all_questions():
+        """Returns questions paginated by 10"""
+        questions = Question.query.all()
+        page = request.args.get('page', 1, type=int)
+        start = (page - 1) * 10
+        end = start + 10
+        formatted_questions = [q.format() for q in questions]
+        categories = {str(c.id): c.type for c in Category.query.all()}
+
+        return {
+            'success': True,
+            'questions': formatted_questions[start:end],
+            'total_questions': len(questions),
+            'categories': categories,
+        }
 
     '''
     @TODO: 
