@@ -37,10 +37,10 @@ def create_app(test_config=None):
 
     @app.route('/categories')
     def all_categories():
-        return {
+        return jsonify({
             'success': True,
             'categories': {str(c.id): c.type for c in Category.query.all()},
-        }
+        })
 
     '''
     DONE:
@@ -71,12 +71,12 @@ def create_app(test_config=None):
         formatted_questions = [q.format() for q in questions]
         categories = {str(c.id): c.type for c in Category.query.all()}
 
-        return {
+        return jsonify({
             'success': True,
             'questions': formatted_questions,
             'total_questions': len(questions),
             'categories': categories,
-        }
+        })
 
     '''
     DONE:
@@ -124,10 +124,10 @@ def create_app(test_config=None):
             ).all()
             formatted_questions = [q.format() for q in questions]
 
-            return {
+            return jsonify({
                 'success': True,
                 'questions': formatted_questions,
-            }
+            })
         else:
             try:
                 category_id = int(data['category'])
@@ -140,7 +140,7 @@ def create_app(test_config=None):
                 )
                 db.session.add(question)
                 db.session.commit()
-                return {'success': True, 'question_id': question.id}
+                return jsonify({'success': True, 'question_id': question.id})
             except (TypeError, KeyError):
                 print(exc_info())
                 abort(400)
@@ -169,10 +169,10 @@ def create_app(test_config=None):
     def category_questions(id: int):
         category = Category.query.get(id) or abort(404)
         questions = Question.query.filter_by(category=category).all()
-        return {
+        return jsonify({
             'success': True,
             'questions': [q.format() for q in questions],
-        }
+        })
 
     '''
     DONE: 
@@ -208,44 +208,43 @@ def create_app(test_config=None):
 
         questions = questions.all()
         if questions:
-            return {
+            return jsonify({
                 'success': True,
                 'question': random.choice(questions).format()
-            }
+            })
         else:
-            return {'success': True, 'question': None}
-
+            return jsonify({'success': True, 'question': None})
 
     @app.errorhandler(400)
     def bad_request(_error):
-        return {
+        return jsonify({
             'success': False,
             'error': 400,
             'message': 'bad request',
-        }, 400
+        }), 400
 
     @app.errorhandler(404)
     def not_found(_error):
-        return {
+        return jsonify({
             'success': False,
             'error': 404,
             'message': 'not found',
-        }, 404
+        }), 404
 
     @app.errorhandler(422)
     def unprocessable(_error):
-        return {
+        return jsonify({
             'success': False,
             'error': 422,
             'message': 'unprocessable',
-        }, 422
+        }), 422
 
     @app.errorhandler(500)
     def internal_server_error(_error):
-        return {
+        return jsonify({
            'success': False,
            'error': 500,
            'message': 'internal server error',
-        }, 500
+        }), 500
 
     return app
