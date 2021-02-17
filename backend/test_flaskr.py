@@ -73,7 +73,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(len(data['questions']), 10)
+        self.assertIsNotNone(data['questions'])
         self.assertIsNotNone(data.get('total_questions'))
         self.assertEqual(data.get('categories'), self.categories_dict)
 

@@ -61,12 +61,18 @@ def create_app(test_config=None):
         page = request.args.get('page', 1, type=int)
         start = (page - 1) * 10
         end = start + 10
+        sliced_questions = questions[start:end]
+
+        if page != 1 and not sliced_questions:
+            # don't raise 404 on first page
+            abort(404)
+
         formatted_questions = [q.format() for q in questions]
         categories = {str(c.id): c.type for c in Category.query.all()}
 
         return {
             'success': True,
-            'questions': formatted_questions[start:end],
+            'questions': formatted_questions,
             'total_questions': len(questions),
             'categories': categories,
         }
