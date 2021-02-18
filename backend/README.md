@@ -8,21 +8,15 @@ This project uses postgresql as a database.
 createdb trivia
 ```
 
-### Installation
-Installation is pretty straightforward. Here is a copy paste for linux/macOS:
+### Run
 ```shell script
-git clone https://github.com/drdilyor/trivia-api
-cd trivia-api/backend
+cd backend
 python3 -m venv venv --prompt "nano project by an uzbek coder"
 source venv/bin/activate
 pip install -r requirements.txt
 export FLASK_APP=flaskr
 export FLASK_DEBUG=true
-flask run &
-
-cd ../frontend
-npm install
-npm start
+flask run
 
 ```
 

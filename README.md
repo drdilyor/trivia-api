@@ -1,5 +1,23 @@
 # Full Stack API Final Project
 
+## Installation
+Installation is pretty straightforward. Here is a copy paste for linux/macOS:
+```shell script
+git clone https://github.com/drdilyor/trivia-api
+cd trivia-api/backend
+python3 -m venv venv --prompt "nano project by an uzbek coder"
+source venv/bin/activate
+pip install -r requirements.txt
+export FLASK_APP=flaskr
+export FLASK_DEBUG=true
+flask run &
+
+cd ../frontend
+npm install
+npm start
+
+```
+
 ## Full Stack Trivia
 
 Udacity is invested in creating bonding experiences for its employees and students. A bunch of team members got the idea to hold trivia on a regular basis and created a  webpage to manage the trivia app and play the game, but their API experience is limited and still needs to be built out. 
