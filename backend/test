@@ -3,4 +3,7 @@ dropdb trivia_test
 createdb trivia_test
 psql trivia_test < trivia.psql
 echo "Initialized test database"
-#python3 test_flaskr.py
+
+if [ "$1" = "" ]; then
+  python3 test_flaskr.py
+fi

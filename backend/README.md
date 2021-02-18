@@ -1,100 +1,304 @@
 # Full Stack Trivia API Backend
 
-## Getting Started
+## Getting started
 
-### Installing Dependencies
+### Database setup
+This project uses postgresql as a database.
+```shell script
+createdb trivia
+```
 
-#### Python 3.7
-
-Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
-
-#### Virtual Enviornment
-
-We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organaized. Instructions for setting up a virual enviornment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-
-#### PIP Dependencies
-
-Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
-
-```bash
+### Installation
+Installation is pretty straightforward. Here is a copy paste for linux/macOS:
+```shell script
+git clone https://github.com/drdilyor/trivia-api
+cd trivia-api/backend
+python3 -m venv venv --prompt "nano project by an uzbek coder"
+source venv/bin/activate
 pip install -r requirements.txt
-```
-
-This will install all of the required packages we selected within the `requirements.txt` file.
-
-##### Key Dependencies
-
-- [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
-
-- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py. 
-
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
-
-## Database Setup
-With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
-```bash
-psql trivia < trivia.psql
-```
-
-## Running the server
-
-From within the `backend` directory first ensure you are working using your created virtual environment.
-
-To run the server, execute:
-
-```bash
 export FLASK_APP=flaskr
-export FLASK_ENV=development
-flask run
-```
+export FLASK_DEBUG=true
+flask run &
 
-Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
-
-Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application. 
-
-## Tasks
-
-One note before you delve into your tasks: for each endpoint you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
-
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
-3. Create an endpoint to handle GET requests for all available categories. 
-4. Create an endpoint to DELETE question using a question ID. 
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 
-6. Create a POST endpoint to get questions based on category. 
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question. 
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
-9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
-
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+cd ../frontend
+npm install
+npm start
 
 ```
 
+
+And navigate to http://localhost:3000
 
 ## Testing
-To run the tests, run
+To run all tests (linux/macOS):
 ```
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-python test_flaskr.py
+./test
 ```
+
+## API documentation
+All api methods return JSON. POST endpoints accept JSON.
+### Get all categories
+#### Endpoint
+`GET /categories`
+
+#### Query parameters
+None
+
+#### Sample request
+`curl "http://localhost:5000/categories"`
+
+The above command returns JSON structured like this:
+```json
+{
+  "success": true,
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  }
+}
+```
+
+#### Raises
+This endpoint doesn't raise any errors
+
+
+### Get all questions
+#### Endpoint
+`GET /questions`
+
+#### Query parameters
+Parameter | Type     | Default | Description
+----------|----------|---------|------------
+page      | `Number` | 1       | Intended page (10 questions per page)
+
+#### Sample request
+`curl "http://localhost:5000/questions"`
+
+The above command returns JSON structured like this:
+```json
+
+{
+  "success": true,
+  "categories": {
+    "1": "Science",
+    "2": "..."
+  },
+  "questions": [
+    {
+      "id": 1,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?",
+      "answer": "Apollo 13",
+      "category": "Entertainment",
+      "category_id": 5,
+      "difficulty": 4
+    },
+    {
+      "id": 2,
+      "question": "..."
+    }
+  ],
+  "total_questions": 19
+}
+```
+
+#### Raises
+This endpoint doesn't raise any errors
+
+
+### Search for questions
+#### Endpoint
+`POST /questions`
+
+#### Query parameters
+Parameter  | Type     | Description
+-----------|----------|------------
+searchTerm | `String` | Search string (case-insensitive)
+
+#### Sample request
+```shell script
+curl "http://localhost:5000/questions" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --DATA '{"searchTerm": "world"}'
+```
+
+The above command returns JSON structured like this:
+```json
+
+
+
+
+{
+  "success": true,
+  "questions": [
+    {
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?",
+      "answer": "Brazil",
+      "category": "Sports",
+      "category_id": 6,
+      "difficulty": 3
+    },
+    {
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?",
+      "answer": "Uruguay",
+      "category": "Sports",
+      "category_id": 6,
+      "difficulty": 4
+   }
+ ]
+}
+```
+
+#### Raises
+This endpoint doesn't raise any errors
+
+
+### Create a new question
+#### Endpoint
+`POST /questions`
+
+#### Post parameters
+Parameter  | Type     | Description
+-----------|----------|------------
+question   | `String` | Text of the question
+answer     | `String` | Answer of the question
+category   | `Number` | ID of the category the question will belong
+difficulty | `Number` | Difficulty score (usually between 1 and 5)
+
+#### Sample request
+```shell script
+curl "http://localhost:5000/questions" \
+   -X POST \
+   -H "Content-Type: application/json" \
+   --DATA '{
+     "question": "Answer to the ultimate question",
+     "answer": "42",
+     "category": 2,
+     "difficulty": 1
+   }'
+```
+
+The above command returns JSON structured like this:
+```json
+
+{
+  "success": true,
+  "question_id": 20
+}
+```
+
+#### Raises
+**400** if any required field is missing/malformed, or if category doesn't exist
+
+
+### Delete a question
+#### Endpoint
+`DELETE /questions/<id>`
+
+#### Query parameters
+Parameter | Type     | Description
+----------|----------|------------
+id        | `Number` | The ID of the question to delete
+
+#### Sample request
+```
+curl "http://localhost:5000/questions/1" \
+  -X DELETE
+```
+
+The above command returns JSON structured like this:
+```json
+
+{
+  "success": true
+}
+```
+
+#### Raises
+**404** if question doesn't exist
+
+
+### Get questions that belong to a category
+#### Endpoint
+`GET /categories/<id>/questions`
+
+#### Query parameters
+Parameter | Type     | Description
+----------|----------|------------
+id        | `Number` | The ID of the category
+
+#### Sample request
+```
+curl "http://localhost:5000/categories/2/questions"
+```
+
+The above command returns JSON structured like this:
+```json
+
+{
+  "success": true,
+  "questions": [
+    {
+      "id": 16,
+      "question": "Which Dutch graphic artist-initials M C was a creator of optical illusions?",
+      "answer":"Escher",
+      "category": "Art",
+      "category_id": 2,
+      "difficulty": 1
+    },
+    {
+      "id": 21,
+      "question": "..."
+    }
+  ]
+}
+```
+
+#### Raises
+**404** if category doesn't exist
+
+### Play quiz
+#### Endpoint
+`POST /quizzes`
+
+#### Post parameters
+Parameter          | Type            | Description
+-------------------|-----------------|------------
+previous_questions | `Array<Number>` | Array of question ID's that user already answered
+quiz_category      | `Object`        | Category by which the next question should be selected
+
+#### Sample request
+```
+curl "http://localhost:5000/quizzes" \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --DATA '{"quiz_category": {"type": "Science", "id": 1}}'
+```
+
+The above command returns JSON structured like this:
+```json
+
+{
+  "success": true,
+  "question": {
+    "id": 21,
+    "question": "Who discovered penicillin?",
+    "answer": "Alexander Fleming",
+    "category": "Science",
+    "category_id": 1,
+    "difficulty": 3
+  }
+}
+```
+
+#### Raises
+**400** if category doesn't exist, or is malformed (see sample command above)
+
+#### Notes
+`question` field is empty if there are no questions left
