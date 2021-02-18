@@ -68,7 +68,7 @@ def create_app(test_config=None):
             # don't raise 404 on first page
             abort(404)
 
-        formatted_questions = [q.format() for q in questions]
+        formatted_questions = [q.format() for q in sliced_questions]
         categories = {str(c.id): c.type for c in Category.query.all()}
 
         return jsonify({
