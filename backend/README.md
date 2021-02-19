@@ -296,3 +296,11 @@ The above command returns JSON structured like this:
 
 #### Notes
 `question` field is empty if there are no questions left
+
+### Errors
+Error | Description
+------|-------------
+400   | Required fields are missing or foreign key doesn't exist
+404   | Resource not found, e.g. deleting a question that doesn't exist
+422   | Database error
+500   | Internal server error
